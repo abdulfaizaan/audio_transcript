@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Audio Translator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e3a8a);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      color: #f1f5f9;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    input[type="file"],
+    select,
+    button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    input[type="file"],
+    select {
+      background-color: #1e293b;
+      color: #f8fafc;
+    }
+
+    button {
+      background-color: #2563eb;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #1d4ed8;
+    }
+
+    .output {
+      margin-top: 20px;
+    }
+
+    .output h3 {
+      margin: 10px 0 5px;
+      font-size: 1.1rem;
+      color: #93c5fd;
+    }
+
+    .output p {
+      background-color: rgba(15, 23, 42, 0.5);
+      padding: 10px;
+      border-radius: 10px;
+      color: #e2e8f0;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>🎧 Upload Audio & Translate</h2>
+
+    <form id="uploadForm">
+      <input type="file" name="file" accept=".mp3,.wav,.webm,.m4a" required />
+      
+      <select name="language">
+        <option value="Hindi">Hindi</option>
+        <option value="Spanish">Spanish</option>
+        <option value="French">French</option>
+        <option value="German">German</option>
+      </select>
+      
+      <button type="submit">Translate Audio</button>
+    </form>
+
+    <div class="output" id="resultContainer" style="display: none;">
+      <h3>Transcript</h3>
+      <p id="transcript"></p>
+
+      <h3>Translation</h3>
+      <p id="translation"></p>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+
+      const response = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      if (data.error) {
+        alert(data.error);
+        return;
+      }
+
+      document.getElementById('transcript').innerText = data.transcript;
+      document.getElementById('translation').innerText = data.translated_text;
+      document.getElementById('resultContainer').style.display = 'block';
+    });
+  </script>
+
+</body>
+</html>
